@@ -75,19 +75,26 @@ def generate_dungeon(
         x = random.randint(0, dungeon.width-room_width-1)
         y = random.randint(0, dungeon.height-room_height-1)
 
+        # "RectangularRoom" class makes rectangles easier to work with
         new_room = RectangularRoom(x, y, room_width, room_height)
 
+        # Run through the other rooms and see if they intersect with this one
         if any(new_room.intersects(other_room) for other_room in rooms):
             continue
+        # If there are no intersections then the room is valid
 
+        # dig out this room's inner area.
         dungeon.tiles[new_room.inner] = tile_types.floor
 
         if len(rooms) == 0:
+            # The first room is the player's starting room
             player.x, player.y = new_room.center
         else:
+            # Dig out a tunnel between this room and the previous room
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
+        # Finally, append the new room to the list
         rooms.append(new_room)
 
     return dungeon
