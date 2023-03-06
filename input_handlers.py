@@ -182,3 +182,5 @@ class HistoryViewer(EventHandler):
             self.cursor = self.log_length-1  # move directly to the bottom
         else:
             self.engine.event_handler = MainGameEventHandler(self.engine)
+
+# TODO: Add AskUserEventHandler
