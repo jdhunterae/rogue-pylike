@@ -4,9 +4,9 @@ import copy
 import tcod
 
 from engine import Engine
+import entity_factories
 from input_handlers import EventHandler
 from procgen import generate_dungeon
-import entity_factories
 
 
 def main() -> None:

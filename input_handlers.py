@@ -1,5 +1,7 @@
 from typing import Optional
+
 import tcod.event
+
 from actions import Action, EscapeAction, BumpAction
 
 
@@ -24,4 +26,5 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
 
+        # No valid key pressed
         return action
