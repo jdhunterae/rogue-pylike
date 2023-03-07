@@ -140,6 +140,11 @@ class ItemAction(Action):
         self.item.consumable.activate(self)
 
 
+class DropItem(ItemAction):
+    def perform(self) -> None:
+        self.entity.inventory.drop(self.item)
+
+
 class PickupAction(Action):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
