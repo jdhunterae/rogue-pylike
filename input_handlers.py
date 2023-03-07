@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 import tcod.event
 
+import actions
 from actions import (
     Action,
     BumpAction,
@@ -114,6 +115,10 @@ class MainGameEventHandler(EventHandler):
         elif key in WAIT_KEYS:
             action = WaitAction(player)
 
+        elif key == tcod.event.K_i:
+            self.engine.event_handler = InventoryActivateHandler(self.engine)
+        elif key == tcod.event.K_d:
+            self.engine.event_handler = InventoryDropHandler(self.engine)
         elif key == tcod.event.K_v:
             self.engine.event_handler = HistoryViewer(self.engine)
         elif key == tcod.event.K_g:
@@ -184,6 +189,7 @@ class HistoryViewer(EventHandler):
         else:
             self.engine.event_handler = MainGameEventHandler(self.engine)
 
+
 class AskUserEventHandler(EventHandler):
     """Handles user input for actions which require special input."""
 
@@ -192,12 +198,12 @@ class AskUserEventHandler(EventHandler):
         if super().handle_action(action):
             self.engine.event_handler = MainGameEventHandler(self.engine)
             return True
-        
+
         return False
-    
+
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         """By default any key exits this input handler"""
-        if event.sym in { # Ignore modifier tags
+        if event.sym in {  # Ignore modifier tags
             tcod.event.K_LSHIFT,
             tcod.event.K_RSHIFT,
             tcod.event.K_LCTRL,
@@ -206,30 +212,31 @@ class AskUserEventHandler(EventHandler):
             tcod.event.K_RALT,
         }:
             return None
-        
+
         return self.on_exit()
-    
+
     def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[Action]:
         """By default any mouse button click exits this input handler"""
         return self.on_exit()
-    
-    def on_exit(self)->Optional[Action]:
+
+    def on_exit(self) -> Optional[Action]:
         """Called when the user is trying to exit or cancel an action.
-        
+
         By default this returns to the main event handler
         """
         self.engine.event_handler = MainGameEventHandler(self.engine)
         return None
 
+
 class InventoryEventHandler(AskUserEventHandler):
     """This handler lets the user select an item
-    
+
     What happens then depends on the subclass
     """
 
     TITLE = "<missing title>"
 
-    def on_render(self, console: tcod.Console)->None:
+    def on_render(self, console: tcod.Console) -> None:
         """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
         Will move to a different position based on where the player is located, so the player can always see where
         they are.
@@ -241,12 +248,12 @@ class InventoryEventHandler(AskUserEventHandler):
 
         if height <= 3:
             height = 3
-        
+
         if self.engine.player.x <= 3:
             x = 40
         else:
             x = 0
-        
+
         y = 0
 
         width = len(self.TITLE) + 4
@@ -258,8 +265,8 @@ class InventoryEventHandler(AskUserEventHandler):
             height=height,
             title=self.TITLE,
             clear=True,
-            fg=(255,255,255),
-            bg=(0,0,0),
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
         )
 
         if number_of_items_in_inventory > 0:
@@ -267,7 +274,7 @@ class InventoryEventHandler(AskUserEventHandler):
                 item_key = chr(ord("a")+i)
                 console.print(x+1, y+i+1, f"({item_key}) {item.name}")
         else:
-            console.print(x+1,y+1, "(Empty)")
+            console.print(x+1, y+1, "(Empty)")
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         player = self.engine.player
@@ -285,7 +292,27 @@ class InventoryEventHandler(AskUserEventHandler):
                 return None
             return self.on_item_selected(selected_item)
         return super().ev_keydown(event)
-    
-    def on_item_selected(self, item:Item)->Optional[Action]:
+
+    def on_item_selected(self, item: Item) -> Optional[Action]:
         """Called when the user selects an item"""
         raise NotImplementedError()
+
+
+class InventoryActivateHandler(InventoryEventHandler):
+    """Handle using an inventory item."""
+
+    TITLE = "Select an item to use"
+
+    def on_item_selected(self, item: Item) -> Optional[Action]:
+        """Return the action for the selected item"""
+        return item.consumable.get_action(self.engine.player)
+
+
+class InventoryDropHandler(InventoryEventHandler):
+    """Handle dropping an inventory item."""
+
+    TITLE = "Select an item to drop"
+
+    def on_item_selected(self, item: Item) -> Optional[Action]:
+        """Drop the selected item"""
+        return actions.DropItem(self.engine.player, item)
