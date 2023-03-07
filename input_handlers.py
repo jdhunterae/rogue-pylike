@@ -8,7 +8,6 @@ import actions
 from actions import (
     Action,
     BumpAction,
-    EscapeAction,
     PickupAction,
     WaitAction
 )
@@ -125,7 +124,7 @@ class MainGameEventHandler(EventHandler):
             action = PickupAction(player)
 
         elif key == tcod.event.K_ESCAPE:
-            action = EscapeAction(player)
+            raise SystemExit()
 
         # No valid key pressed
         return action
