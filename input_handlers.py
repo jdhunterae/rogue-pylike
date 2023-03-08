@@ -60,12 +60,6 @@ CONFIRM_KEYS = {
 }
 
 
-CONFIRM_KEYS = {
-    tcod.event.K_RETURN,
-    tcod.event.K_KP_ENTER,
-}
-
-
 class EventHandler(tcod.event.EventDispatch[Action]):
     def __init__(self, engine: Engine):
         self.engine = engine
