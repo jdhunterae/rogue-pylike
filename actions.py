@@ -22,8 +22,11 @@ class Action:
 
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
+
         `self.engine` is the scope this action is being performed in.
+
         `self.entity` is the object performing the action.
+
         This method must be overridden by Action subclasses.
         """
         raise NotImplementedError()
@@ -49,8 +52,7 @@ class PickupAction(Action):
                 item.parent = self.entity.inventory
                 inventory.items.append(item)
 
-                self.engine.message_log.add_message(
-                    f"You picked up the {item.name}!")
+                self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 return
 
         raise exceptions.Impossible("There is nothing here to pick up.")
@@ -95,7 +97,7 @@ class ActionWithDirection(Action):
 
     @property
     def dest_xy(self) -> Tuple[int, int]:
-        """Returns this action's destination."""
+        """Returns this actions destination."""
         return self.entity.x + self.dx, self.entity.y + self.dy
 
     @property
@@ -158,5 +160,6 @@ class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
+
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

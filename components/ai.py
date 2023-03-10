@@ -18,6 +18,7 @@ class BaseAI(Action):
 
     def get_path_to(self, dest_x: int, dest_y: int) -> List[Tuple[int, int]]:
         """Compute and return a path to the target position.
+
         If there is no valid path then returns an empty list.
         """
         # Copy the walkable array.
@@ -39,8 +40,7 @@ class BaseAI(Action):
         pathfinder.add_root((self.entity.x, self.entity.y))  # Start position.
 
         # Compute the path to the destination and remove the starting point.
-        path: List[List[int]] = pathfinder.path_to((dest_x, dest_y))[
-            1:].tolist()
+        path: List[List[int]] = pathfinder.path_to((dest_x, dest_y))[1:].tolist()
 
         # Convert from List[List[int]] to List[Tuple[int, int]].
         return [(index[0], index[1]) for index in path]

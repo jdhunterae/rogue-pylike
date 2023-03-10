@@ -35,10 +35,10 @@ class RectangularRoom:
     def intersects(self, other: RectangularRoom) -> bool:
         """Return True if this room overlaps with another RectangularRoom."""
         return (
-            self.x1 <= other.x2
-            and self.x2 >= other.x1
-            and self.y1 <= other.y2
-            and self.y2 >= other.y1
+                self.x1 <= other.x2
+                and self.x2 >= other.x1
+                and self.y1 <= other.y2
+                and self.y2 >= other.y1
         )
 
 
@@ -137,8 +137,7 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        place_entities(new_room, dungeon, max_monsters_per_room,
-                       max_items_per_room)
+        place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
         # Finally, append the new room to the list.
         rooms.append(new_room)
