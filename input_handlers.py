@@ -75,7 +75,8 @@ class BaseEventHandler(tcod.event.EventDispatch[ActionOrHandler]):
         state = self.dispatch(event)
         if isinstance(state, BaseEventHandler):
             return state
-        assert not isinstance(state, Action), f"{self!r} can not handle actions."
+        assert not isinstance(
+            state, Action), f"{self!r} can not handle actions."
         return self
 
     def on_render(self, console: tcod.Console) -> None:
@@ -126,7 +127,8 @@ class EventHandler(BaseEventHandler):
             if not self.engine.player.is_alive:
                 # The player was killed sometime during or after the action.
                 return GameOverEventHandler(self.engine)
-            return MainGameEventHandler(self.engine)  # Return to the main handler.
+            # Return to the main handler.
+            return MainGameEventHandler(self.engine)
         return self
 
     def handle_action(self, action: Optional[Action]) -> bool:
@@ -243,7 +245,8 @@ class InventoryEventHandler(AskUserEventHandler):
             try:
                 selected_item = player.inventory.items[index]
             except IndexError:
-                self.engine.message_log.add_message("Invalid entry.", color.invalid)
+                self.engine.message_log.add_message(
+                    "Invalid entry.", color.invalid)
                 return None
             return self.on_item_selected(selected_item)
         return super().ev_keydown(event)
@@ -389,8 +392,14 @@ class MainGameEventHandler(EventHandler):
         action: Optional[Action] = None
 
         key = event.sym
+        modifier = event.mod
 
         player = self.engine.player
+
+        if key == tcod.event.K_PERIOD and modifier & (
+            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+        ):
+            return actions.TakeStairsAction(player)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
@@ -482,11 +491,13 @@ class HistoryViewer(EventHandler):
                 self.cursor = 0
             else:
                 # Otherwise move while staying clamped to the bounds of the history log.
-                self.cursor = max(0, min(self.cursor + adjust, self.log_length - 1))
+                self.cursor = max(
+                    0, min(self.cursor + adjust, self.log_length - 1))
         elif event.sym == tcod.event.K_HOME:
             self.cursor = 0  # Move directly to the top message.
         elif event.sym == tcod.event.K_END:
-            self.cursor = self.log_length - 1  # Move directly to the last message.
+            # Move directly to the last message.
+            self.cursor = self.log_length - 1
         else:  # Any other key moves back to the main game state.
             return MainGameEventHandler(self.engine)
         return None
