@@ -23,7 +23,8 @@ tile_dt = np.dtype(
 
 
 def new_tile(
-        *,  # Enforce the use of keywords, so that parameter order doesn't matter.
+        # Enforce the use of keywords, so that parameter order doesn't matter.
+        *,
         walkable: int,
         transparent: int,
         dark: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
@@ -47,4 +48,10 @@ wall = new_tile(
     transparent=False,
     dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
     light=(ord(" "), (255, 255, 255), (130, 110, 50)),
+)
+down_stairs = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
+    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
 )
