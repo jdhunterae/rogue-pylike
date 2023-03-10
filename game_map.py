@@ -20,7 +20,8 @@ class GameMap:
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
+        self.tiles = np.full(
+            (width, height), fill_value=tile_types.wall, order="F")
 
         self.visible = np.full(
             (width, height), fill_value=False, order="F"
@@ -28,6 +29,8 @@ class GameMap:
         self.explored = np.full(
             (width, height), fill_value=False, order="F"
         )  # Tiles the player has seen before
+
+        self.downstairs_location = (0, 0)
 
     @property
     def game_map(self) -> GameMap:
