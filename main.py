@@ -5,8 +5,8 @@ import traceback
 import tcod
 
 import color
-from engine import Engine
 import entity_factories
+from engine import Engine
 from procgen import generate_dungeon
 
 
@@ -24,7 +24,7 @@ def main() -> None:
     max_monsters_per_room = 2
     max_items_per_room = 2
 
-    tileset = tcod.tileset.load_tilesheet(
+    tile_set = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
@@ -42,20 +42,18 @@ def main() -> None:
         max_items_per_room=max_items_per_room,
         engine=engine,
     )
-
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!",
-        color.welcome_text,
+        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
     )
 
     with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
-        tileset=tileset,
-        title="Yet Another Roguelike Tutorial",
-        vsync=True,
+            screen_width,
+            screen_height,
+            tileset=tile_set,
+            title="Yet Another Roguelike Tutorial",
+            vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
         while True:
@@ -71,8 +69,7 @@ def main() -> None:
                 traceback.print_exc()  # Print error to stderr.
                 # Then print the error to the message log.
                 engine.message_log.add_message(
-                    traceback.format_exc(), color.error
-                )
+                    traceback.format_exc(), color.error)
 
 
 if __name__ == "__main__":

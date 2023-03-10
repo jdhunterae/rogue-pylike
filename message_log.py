@@ -1,6 +1,6 @@
+import textwrap
 from typing import Iterable, List, Reversible, Tuple
 
-import textwrap
 import tcod
 
 import color
@@ -17,7 +17,6 @@ class Message:
         """The full text of this message, including the count if necessary."""
         if self.count > 1:
             return f"{self.plain_text} (x{self.count})"
-
         return self.plain_text
 
 
@@ -39,7 +38,7 @@ class MessageLog:
             self.messages.append(Message(text, fg))
 
     def render(
-        self, console: tcod.Console, x: int, y: int, width: int, height: int,
+            self, console: tcod.Console, x: int, y: int, width: int, height: int,
     ) -> None:
         """Render this log over the given area.
         `x`, `y`, `width`, `height` is the rectangular region to render onto
@@ -57,24 +56,23 @@ class MessageLog:
 
     @classmethod
     def render_messages(
-        cls,
-        console: tcod.Console,
-        x: int,
-        y: int,
-        width: int,
-        height: int,
-        messages: Reversible[Message],
+            cls,
+            console: tcod.Console,
+            x: int,
+            y: int,
+            width: int,
+            height: int,
+            messages: Reversible[Message],
     ) -> None:
         """Render the messages provided.
         The `messages` are rendered starting at the last message and working
         backwards.
         """
-        y_offset = height-1
+        y_offset = height - 1
 
         for message in reversed(messages):
             for line in reversed(list(cls.wrap(message.full_text, width))):
-                console.print(x=x, y=y+y_offset, string=line, fg=message.fg)
+                console.print(x=x, y=y + y_offset, string=line, fg=message.fg)
                 y_offset -= 1
-
                 if y_offset < 0:
-                    return  # no more space to print messages
+                    return  # No more space to print messages.
